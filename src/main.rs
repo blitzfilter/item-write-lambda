@@ -1,11 +1,9 @@
 use aws_config::BehaviorVersion;
+use aws_lambda_events::sqs::SqsEvent;
 use aws_sdk_config::config::Credentials;
 use aws_sdk_dynamodb::Client;
-use item_core::item_data::ItemData;
-use item_core::item_model::ItemModel;
+use item_write_lambda::function_handler;
 use lambda_runtime::{Error, LambdaEvent, run, service_fn};
-use serde_json::{Value, from_value};
-use item_write::write_items;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -17,22 +15,8 @@ async fn main() -> Result<(), Error> {
         .await;
     let client = &Client::new(config);
 
-    run(service_fn(|event: LambdaEvent<Value>| async move {
+    run(service_fn(|event: LambdaEvent<SqsEvent>| async {
         function_handler(event, client).await
     }))
     .await
-}
-
-async fn function_handler(event: LambdaEvent<Value>, client: &Client) -> Result<(), Error> {
-    let payload = event.payload;
-    let items = from_value::<Vec<ItemData>>(payload)?
-        .iter()
-        .map(|datum| datum.to_owned().into())
-        .collect::<Vec<ItemModel>>();
-    
-    let write_responses = write_items(&items, client).await;
-
-    // TODO: Retries, DLQ, partial failure, ...
-    
-    Ok(())
 }
