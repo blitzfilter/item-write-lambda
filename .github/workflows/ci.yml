@@ -66,11 +66,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
 
-      - name: Install Zig
+      - name: Install Zig via NPM
         run: |
-          sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 379CE192D401AB61
           sudo apt-get update
-          sudo apt-get install -y zig
+          sudo apt-get install -y nodejs npm
+          sudo npm install -g @ziglang/cli
 
       - name: Install cargo-lambda
         run: cargo install cargo-lambda
