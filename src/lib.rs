@@ -4,7 +4,7 @@ use item_core::item_data::ItemData;
 use item_core::item_model::ItemModel;
 use item_write::write_items;
 use lambda_runtime::{Error, LambdaEvent};
-use serde_json::{Value, from_str, from_value};
+use serde_json::{from_str};
 
 pub async fn function_handler(event: LambdaEvent<SqsEvent>, client: &Client) -> Result<(), Error> {
     let items = event
