@@ -46,6 +46,8 @@ jobs:
     name: Build Release-Zip
     runs-on: ubuntu-latest
     needs: build-and-test
+    permissions:
+      contents: write
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
 
     steps:
