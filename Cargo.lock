@@ -172,6 +172,7 @@ dependencies = [
  "aws-credential-types",
  "aws-sigv4",
  "aws-smithy-async",
+ "aws-smithy-eventstream",
  "aws-smithy-http",
  "aws-smithy-runtime",
  "aws-smithy-runtime-api",
@@ -215,6 +216,53 @@ name = "aws-sdk-dynamodb"
 version = "1.72.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "412cd587b03bacb2f7b94a5446cc77dee49a8fa848e636f9545df3aadbbfaf8b"
+dependencies = [
+ "aws-credential-types",
+ "aws-runtime",
+ "aws-smithy-async",
+ "aws-smithy-http",
+ "aws-smithy-json",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-types",
+ "bytes",
+ "fastrand",
+ "http 0.2.12",
+ "once_cell",
+ "regex-lite",
+ "tracing",
+]
+
+[[package]]
+name = "aws-sdk-lambda"
+version = "1.76.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "84a08ae86f07140925b6ff2116b8f3f5ff52a3a7d3baec15a176c0559b2ea47c"
+dependencies = [
+ "aws-credential-types",
+ "aws-runtime",
+ "aws-smithy-async",
+ "aws-smithy-eventstream",
+ "aws-smithy-http",
+ "aws-smithy-json",
+ "aws-smithy-runtime",
+ "aws-smithy-runtime-api",
+ "aws-smithy-types",
+ "aws-types",
+ "bytes",
+ "fastrand",
+ "http 0.2.12",
+ "once_cell",
+ "regex-lite",
+ "tracing",
+]
+
+[[package]]
+name = "aws-sdk-sqs"
+version = "1.65.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f6c5fb5d108c518c3bfc077d39a3cd5120e0115ac60aba8085dc79e2d08ab6b1"
 dependencies = [
  "aws-credential-types",
  "aws-runtime",
@@ -310,6 +358,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3503af839bd8751d0bdc5a46b9cac93a003a353e635b0c12cf2376b5b53e41ea"
 dependencies = [
  "aws-credential-types",
+ "aws-smithy-eventstream",
  "aws-smithy-http",
  "aws-smithy-runtime-api",
  "aws-smithy-types",
@@ -337,11 +386,23 @@ dependencies = [
 ]
 
 [[package]]
+name = "aws-smithy-eventstream"
+version = "0.60.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c45d3dddac16c5c59d553ece225a88870cf81b7b813c9cc17b78cf4685eac7a"
+dependencies = [
+ "aws-smithy-types",
+ "bytes",
+ "crc32fast",
+]
+
+[[package]]
 name = "aws-smithy-http"
 version = "0.62.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "99335bec6cdc50a346fda1437f9fefe33abf8c99060739a546a16457f2862ca9"
 dependencies = [
+ "aws-smithy-eventstream",
  "aws-smithy-runtime-api",
  "aws-smithy-types",
  "bytes",
@@ -2715,10 +2776,13 @@ dependencies = [
 [[package]]
 name = "test-api"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/test-api?branch=main#cbb7c040a1b6bb8bdaff5f8b77422fcbdf6c85ba"
+source = "git+https://github.com/blitzfilter/test-api?branch=main#297c6d2b80358aa17ea58f78f4ea0370637d0d32"
 dependencies = [
  "aws-config",
  "aws-sdk-dynamodb",
+ "aws-sdk-lambda",
+ "aws-sdk-sqs",
+ "aws_lambda_events",
  "item-core",
  "lipsum",
  "rand 0.9.1",
@@ -2736,7 +2800,7 @@ dependencies = [
 [[package]]
 name = "test-api-macros"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/test-api?branch=main#cbb7c040a1b6bb8bdaff5f8b77422fcbdf6c85ba"
+source = "git+https://github.com/blitzfilter/test-api?branch=main#297c6d2b80358aa17ea58f78f4ea0370637d0d32"
 dependencies = [
  "quote",
  "syn",
