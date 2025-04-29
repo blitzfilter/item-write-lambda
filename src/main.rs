@@ -4,7 +4,6 @@ use aws_sdk_config::config::Credentials;
 use aws_sdk_dynamodb::Client;
 use item_write_lambda::function_handler;
 use lambda_runtime::{Error, LambdaEvent, run, service_fn};
-use tracing::info;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -23,8 +22,6 @@ async fn main() -> Result<(), Error> {
         .await;
     let client = &Client::new(config);
 
-    info!("Configured lambda.");
-    
     run(service_fn(move |event: LambdaEvent<SqsEvent>| async move {
         function_handler(client, event).await
     }))

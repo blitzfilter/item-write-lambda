@@ -24,9 +24,9 @@ pub async fn function_handler(client: &Client, event: LambdaEvent<SqsEvent>) -> 
         .map(ItemData::into)
         .collect::<Vec<ItemModel>>();
 
-    info!("{:?}", items);
-    
-    write_items(&items, client).await;
+    write_items(&items, client).await.into_iter().for_each(|res| {
+        info!("{:?}", res);
+    });
 
     info!("Wrote items, finished invocation");
     
