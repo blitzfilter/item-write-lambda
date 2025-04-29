@@ -23,7 +23,7 @@ jobs:
           toolchain: ${{ matrix.toolchain }}
           override: true
 
-      - name: Cache cargo registry
+      - name: Cache Cargo registry
         uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
@@ -31,7 +31,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-registry-
 
-      - name: Cache cargo build
+      - name: Cache Cargo build
         uses: actions/cache@v4
         with:
           path: target
@@ -60,21 +60,29 @@ jobs:
           toolchain: stable
           override: true
 
-      - name: Cache cargo registry
+      - name: Cache Cargo registry
         uses: actions/cache@v4
         with:
           path: ~/.cargo/registry
-          key: ${{ runner.os }}-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
+          key: ubuntu-latest-cargo-registry-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
-            ${{ runner.os }}-cargo-registry-
+            ubuntu-latest-cargo-registry-
 
-      - name: Install Zig via NPM
+      - name: Install Zig (via npm)
         run: |
           sudo apt-get update
           sudo apt-get install -y nodejs npm
           sudo npm install -g @ziglang/cli
 
-      - name: Install cargo-lambda
+      - name: Cache cargo-lambda
+        id: cache-cargo-lambda
+        uses: actions/cache@v4
+        with:
+          path: ~/.cargo/bin/cargo-lambda
+          key: cargo-lambda-bin-v1
+
+      - name: Install cargo-lambda (if not cached)
+        if: steps.cache-cargo-lambda.outputs.cache-hit != 'true'
         run: cargo install cargo-lambda
 
       - name: Build Lambda binary
