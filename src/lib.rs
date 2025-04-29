@@ -5,8 +5,14 @@ use item_core::item_model::ItemModel;
 use item_write::write_items;
 use lambda_runtime::{Error, LambdaEvent};
 use serde_json::{from_str};
+use tracing::info;
 
-pub async fn function_handler(event: LambdaEvent<SqsEvent>, client: &Client) -> Result<(), Error> {
+#[tracing::instrument(skip(event), fields(req_id = %event.context.request_id))]
+pub async fn function_handler(client: &Client, event: LambdaEvent<SqsEvent>) -> Result<(), Error> {
+    info!("Invoked lambda.");
+    
+    info!("{:?}", event);
+    
     let items = event
         .payload
         .records
@@ -18,8 +24,12 @@ pub async fn function_handler(event: LambdaEvent<SqsEvent>, client: &Client) -> 
         .map(ItemData::into)
         .collect::<Vec<ItemModel>>();
 
+    info!("{:?}", items);
+    
     write_items(&items, client).await;
 
+    info!("Wrote items, finished invocation");
+    
     // TODO: Retries, DLQ, partial failure, ...
 
     Ok(())

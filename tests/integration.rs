@@ -29,7 +29,7 @@ async fn should_write_events_in_payload() {
         Context::default(),
     );
 
-    let res = function_handler(event, &client).await;
+    let res = function_handler(&client, event).await;
     assert!(res.is_ok());
 
     for item in items {
