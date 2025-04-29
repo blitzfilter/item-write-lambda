@@ -5,13 +5,13 @@ use item_read::item::get_item_events_by_item_id_sort_latest;
 use item_write_lambda::function_handler;
 use lambda_runtime::{Context, LambdaEvent};
 use serde_json::to_string;
-use test_api::dynamodb::get_client;
 use test_api::generator::Generator;
+use test_api::localstack::get_dynamodb_client;
 use test_api::test_api_macros::blitzfilter_dynamodb_test;
 
 #[blitzfilter_dynamodb_test]
 async fn should_write_events_in_payload() {
-    let client = get_client().await;
+    let client = get_dynamodb_client().await;
     let items = ItemModel::generate_many(10);
     let item_payloads = items
         .iter()

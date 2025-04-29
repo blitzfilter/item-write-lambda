@@ -87,5 +87,5 @@ jobs:
           git checkout main
           cp target/lambda/item-write-lambda/bootstrap.zip bootstrap.zip
           git add bootstrap.zip
-          git commit -m "Add Lambda release zip [skip ci]" || echo "No changes to commit"
+          git commit -m "add Lambda release bootstrap zip" || echo "No changes to commit"
           git push origin main
