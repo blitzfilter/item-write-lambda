@@ -17,7 +17,7 @@ async fn main() -> Result<(), Error> {
     let config = &aws_config::defaults(BehaviorVersion::latest())
         .credentials_provider(Credentials::for_tests())
         .region("eu-central-1")
-        .endpoint_url("http://localhost:4566")
+        .endpoint_url("http://localhost.localstack.cloud:4566")
         .load()
         .await;
     let client = &Client::new(config);

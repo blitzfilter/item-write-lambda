@@ -9,10 +9,6 @@ use tracing::info;
 
 #[tracing::instrument(skip(event), fields(req_id = %event.context.request_id))]
 pub async fn function_handler(client: &Client, event: LambdaEvent<SqsEvent>) -> Result<(), Error> {
-    info!("Invoked lambda.");
-    
-    info!("{:?}", event);
-    
     let items = event
         .payload
         .records
