@@ -12,13 +12,14 @@ use test_api::test_api_macros::blitzfilter_dynamodb_test;
 #[blitzfilter_dynamodb_test]
 async fn should_write_events_in_payload() {
     let client = get_dynamodb_client().await;
-    let items = ItemModel::generate_many(10);
+    let items = ItemModel::generate_many(142);
     let item_payloads = items
         .iter()
         .map(|item| Into::<ItemData>::into(item.clone()))
         .map(|item| {
             let mut msg = SqsMessage::default();
             msg.body = to_string(&item).ok();
+            msg.message_id = Some(item.item_id);
             msg
         })
         .collect();
