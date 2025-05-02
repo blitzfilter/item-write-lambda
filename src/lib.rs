@@ -7,13 +7,16 @@ use item_write::write_item_batch;
 use lambda_runtime::{Error, LambdaEvent};
 use serde_json::from_str;
 use std::collections::HashMap;
-use tracing::{error, warn};
+use tracing::{error, info, warn};
 
 #[tracing::instrument(skip(event), fields(req_id = %event.context.request_id))]
 pub async fn function_handler(
     client: &Client,
     event: LambdaEvent<SqsEvent>,
 ) -> Result<SqsBatchResponse, Error> {
+    let records_count = event.payload.records.len();
+    info!("Handling new SQS batch with {records_count} records.",);
+
     let mut batch_item_failures = Vec::new();
     let mut items = Vec::new();
     let mut item_id_message_id: HashMap<String, String> = HashMap::new();
@@ -47,13 +50,17 @@ pub async fn function_handler(
             },
         }
     }
-    
+
     for item_chunk in items.chunks(25) {
         match write_item_batch(item_chunk, client).await {
             Ok(batch_output) => {
                 if let Some(mut unprocessed) = batch_output.unprocessed_items {
                     let unprocessed_items = unprocessed.remove("items").unwrap_or_default();
                     let unprocessed_items_count = unprocessed_items.len();
+                    info!(
+                        "Successfully wrote {} items to DynamoDB.",
+                        item_chunk.len() - unprocessed_items_count
+                    );
                     if unprocessed_items_count > 0 {
                         warn!(
                             "Batch writing to DynamoDB succeeded, but returned '{unprocessed_items_count}' unprocessed items."
@@ -78,6 +85,14 @@ pub async fn function_handler(
             }
         }
     }
+
+    let failure_count = batch_item_failures.len();
+
+    info!(
+        "Handler finished: {} successes, {} failures.",
+        records_count - failure_count,
+        failure_count
+    );
 
     Ok(SqsBatchResponse {
         batch_item_failures,
