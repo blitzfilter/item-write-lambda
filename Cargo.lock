@@ -189,29 +189,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aws-sdk-config"
-version = "1.68.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b7de8bcff88ff2948bf2154204b7eba0ea30698c1c23770c4a917505fb9fcbd5"
-dependencies = [
- "aws-credential-types",
- "aws-runtime",
- "aws-smithy-async",
- "aws-smithy-http",
- "aws-smithy-json",
- "aws-smithy-runtime",
- "aws-smithy-runtime-api",
- "aws-smithy-types",
- "aws-types",
- "bytes",
- "fastrand",
- "http 0.2.12",
- "once_cell",
- "regex-lite",
- "tracing",
-]
-
-[[package]]
 name = "aws-sdk-dynamodb"
 version = "1.72.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -754,9 +731,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.2.20"
+version = "1.2.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "04da6a0d40b948dfc4fa8f5bbf402b0fc1a64a28dbf7d12ffd683550f2c1b63a"
+checksum = "8691782945451c1c383942c4874dbe63814f61cb57ef773cda2972682b7bb3c0"
 dependencies = [
  "jobserver",
  "libc",
@@ -948,6 +925,12 @@ dependencies = [
  "serde",
  "serde_json",
 ]
+
+[[package]]
+name = "dotenvy"
+version = "0.15.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aaf95b3e5c8f23aa320147307562d361db0ae0d51242340f558153b4eb2439b"
 
 [[package]]
 name = "dunce"
@@ -1689,9 +1672,9 @@ name = "item-write-lambda"
 version = "0.1.0"
 dependencies = [
  "aws-config",
- "aws-sdk-config",
  "aws-sdk-dynamodb",
  "aws_lambda_events",
+ "dotenvy",
  "item-core",
  "item-read",
  "item-write",
@@ -2795,7 +2778,7 @@ dependencies = [
 [[package]]
 name = "test-api"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/test-api?branch=main#c859f6c10ff0ed22ef5283d29826f8713563b1e1"
+source = "git+https://github.com/blitzfilter/test-api?branch=main#03d103ced7b1ea1d8994d3e2d31225db86c5fe08"
 dependencies = [
  "aws-config",
  "aws-sdk-dynamodb",
@@ -2818,7 +2801,7 @@ dependencies = [
 [[package]]
 name = "test-api-macros"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/test-api?branch=main#c859f6c10ff0ed22ef5283d29826f8713563b1e1"
+source = "git+https://github.com/blitzfilter/test-api?branch=main#03d103ced7b1ea1d8994d3e2d31225db86c5fe08"
 dependencies = [
  "quote",
  "syn",

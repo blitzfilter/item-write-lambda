@@ -8,7 +8,6 @@ item-core = { git = "https://github.com/blitzfilter/item-core", branch = "main" 
 item-write = { git = "https://github.com/blitzfilter/item-write", branch = "main" }
 lambda_runtime = "0.13.0"
 aws-config = "1.6.2"
-aws-sdk-config = "1.68.0"
 aws-sdk-dynamodb = "1.72.1"
 aws_lambda_events = "0.16.0"
 serde_json = "1.0.140"
@@ -16,6 +15,7 @@ serde_dynamo = { version = "4.2.14", features = ["aws-sdk-dynamodb+1"]}
 tokio = { version = "1.44.2", features = ["macros"] }
 tracing-subscriber = { version = "0.3.19", features = ["json"] }
 tracing = "0.1.41"
+dotenvy = "0.15.7"
 
 [dev-dependencies]
 test-api = { git = "https://github.com/blitzfilter/test-api", branch = "main" }
