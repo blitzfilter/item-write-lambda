@@ -37,7 +37,7 @@ jobs:
         run: |
           pip install cargo-lambda
           cargo lambda build --release --output-format zip
-          cargo lambda deploy item_write_lambda
+          cargo lambda deploy item-write-lambda
         env:
           AWS_DEFAULT_REGION: eu-central-1
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
