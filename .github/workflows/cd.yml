@@ -36,7 +36,7 @@ jobs:
       - name: Release lambda
         run: |
           pip install cargo-lambda
-          cargo lambda build --release
+          cargo lambda build --release --output-format zip
           cargo lambda deploy item_write_lambda
         env:
           AWS_DEFAULT_REGION: eu-central-1
