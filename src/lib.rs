@@ -9,13 +9,13 @@ use serde_json::from_str;
 use std::collections::HashMap;
 use tracing::{error, info, warn};
 
-#[tracing::instrument(skip(event), fields(req_id = %event.context.request_id))]
+#[tracing::instrument(skip(client, event), fields(req_id = %event.context.request_id))]
 pub async fn function_handler(
     client: &Client,
     event: LambdaEvent<SqsEvent>,
 ) -> Result<SqsBatchResponse, Error> {
     let records_count = event.payload.records.len();
-    info!("Handling new SQS batch with {records_count} records.",);
+    info!(total = records_count, "Handler invoked.",);
 
     let mut batch_item_failures = Vec::new();
     let mut items = Vec::new();
@@ -41,7 +41,10 @@ pub async fn function_handler(
                 }
                 Err(e) => {
                     warn!(
-                        "Deserialization error for message_id '{message_id}': {e}. Body: '{item_json}'"
+                        messageId = %message_id,
+                        error = %e,
+                        body = %item_json,
+                        "Deserialization error"
                     );
                     batch_item_failures.push(BatchItemFailure {
                         item_identifier: message_id,
@@ -51,20 +54,21 @@ pub async fn function_handler(
         }
     }
 
-    for item_chunk in items.chunks(25) {
+    for item_chunk in items.chunks(item_write::MAX_BATCH_SIZE) {
         match write_item_batch(item_chunk, client).await {
             Ok(batch_output) => {
                 if let Some(mut unprocessed) = batch_output.unprocessed_items {
+                    let total_count = item_chunk.len();
                     let unprocessed_items = unprocessed.remove("items").unwrap_or_default();
                     let unprocessed_items_count = unprocessed_items.len();
                     info!(
-                        "Successfully wrote {} items to DynamoDB.",
-                        item_chunk.len() - unprocessed_items_count
+                        total = total_count,
+                        processed = total_count - unprocessed_items_count,
+                        unprocessed = unprocessed_items_count,
+                        "Successfully wrote items to DynamoDB"
                     );
+
                     if unprocessed_items_count > 0 {
-                        warn!(
-                            "Batch writing to DynamoDB succeeded, but returned '{unprocessed_items_count}' unprocessed items."
-                        );
                         unprocessed_items.into_iter().for_each(|wr| {
                             handle_unprocessed(
                                 wr,
@@ -76,7 +80,7 @@ pub async fn function_handler(
                 }
             }
             Err(e) => {
-                warn!("Caught error when writing items in batch to DynamoDB: {e}.");
+                warn!(error = %e, "Writing items in batch to DynamoDB failed.");
                 handle_batch_error(
                     item_chunk,
                     &mut batch_item_failures,
@@ -87,11 +91,10 @@ pub async fn function_handler(
     }
 
     let failure_count = batch_item_failures.len();
-
     info!(
-        "Handler finished: {} successes, {} failures.",
-        records_count - failure_count,
-        failure_count
+        successfull = records_count - failure_count,
+        failed = failure_count,
+        "Handler finished.",
     );
 
     Ok(SqsBatchResponse {
@@ -118,15 +121,16 @@ fn handle_unprocessed(
                 }),
                 None => {
                     error!(
-                        "Could not find (re-map) the message_id for the unprocessed item with item_id '{item_id}'."
+                        messageId = item_id,
+                        "Could not find the message_id for a failed item.",
                     )
                 }
             }
         }
         Err(e) => {
             error!(
-                "Could not convert an unprocessed item from DynamoDB to ItemModel. \
-                                     This will not retry the item. Error: {e}"
+                error = %e,
+                "Failed converting an unprocessed item from DynamoDB to ItemModel."
             )
         }
     }
@@ -145,8 +149,8 @@ fn handle_batch_error(
             }),
             None => {
                 error!(
-                    "Could not find (re-map) the message_id for the failed item with item_id '{}'.",
-                    &item.item_id
+                    messageId = &item.item_id,
+                    "Could not find the message_id for a failed item.",
                 )
             }
         });
