@@ -5,7 +5,6 @@ use item_write_lambda::function_handler;
 use lambda_runtime::{Error, LambdaEvent, run, service_fn};
 use std::env;
 use tracing::info;
-use tracing_subscriber::fmt::format::FmtSpan;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
@@ -13,7 +12,6 @@ async fn main() -> Result<(), Error> {
         .json()
         .with_max_level(tracing::Level::INFO)
         .with_current_span(true)
-        .with_span_events(FmtSpan::NEW | FmtSpan::CLOSE)
         .with_ansi(false)
         .without_time()
         .init();
