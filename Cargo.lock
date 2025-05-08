@@ -1647,7 +1647,7 @@ dependencies = [
 [[package]]
 name = "item-read"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/item-read?branch=main#401ad8c5b2a58b3098db58166b547525b3952903"
+source = "git+https://github.com/blitzfilter/item-read?branch=main#297b531454c4981346c6f7d29e2559325a1d3f09"
 dependencies = [
  "aws-sdk-dynamodb",
  "item-core",
