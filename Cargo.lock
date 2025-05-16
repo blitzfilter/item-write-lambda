@@ -1659,7 +1659,7 @@ dependencies = [
 [[package]]
 name = "item-write"
 version = "0.1.0"
-source = "git+https://github.com/blitzfilter/item-write?branch=main#569fb501429ad56547d0c6daecdc6facdf01f0d6"
+source = "git+https://github.com/blitzfilter/item-write?branch=main#453e01e661c8a8101fc2f019fac8636316b7365f"
 dependencies = [
  "aws-sdk-dynamodb",
  "futures",
